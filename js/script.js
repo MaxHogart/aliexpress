@@ -30,6 +30,8 @@ goodsBtn.forEach(function(btn, i){
 
             trigger.remove();
 
+            showConfirm();
+
             removeBtn.classList.add('goods__item-remove');
             removeBtn.innerHTML = '&times';
             item.appendChild(removeBtn);
@@ -38,5 +40,74 @@ goodsBtn.forEach(function(btn, i){
             if(empty){
                 empty.remove();
             }
+
+            calcGoods();
+            calcTotal();
+            removeFromCart();
     })
 });
+
+function sliceTitle() {
+    titles.forEach(function(item) {
+        if (item.innerText.length < 50) {
+            return;
+        } else {
+            const str = item.innerText.slice(0, 50) + '...';
+             item.textContent = str;
+        }
+    })
+}
+sliceTitle();
+
+function showConfirm() {
+    confirm.style.display = 'block';
+    let counter = 100;
+    const id = setInterval(frame, 10);
+    function frame() {
+        if (counter == 10) {
+            clearInterval(id);
+            confirm.style.display = 'none';
+        } else {
+            counter--;
+            confirm.style.transform = `translateY(-${counter}px)`;
+            confirm.style.opacity = '.' + counter;
+        }
+    }
+}
+
+function calcGoods() {
+    const items = cartWrapper.querySelectorAll('.goods__item');
+    if(items.length == 0){
+        returnEmptyMassage();
+    }
+    badge.textContent = items.length;
+}
+
+function returnEmptyMassage(){
+    let div = document.createElement('div');
+    div.classList.add('empty');
+    div.innerText = 'Ваша корзина пока пуста';
+    cartWrapper.appendChild(div);
+    // console.log(div);
+}
+// returnEmptyMassage();
+
+function calcTotal() {
+    const prices = document.querySelectorAll('.cart__wrapper > .goods__item > .goods__price > span');
+    let total = 0;
+    prices.forEach(function(item) {
+        total += +item.textContent;
+    });
+    totalCost.textContent = total;
+}
+
+function removeFromCart() {
+    const removeBtn = cartWrapper.querySelectorAll('.goods__item-remove');
+    removeBtn.forEach(function(btn) {
+        btn.addEventListener('click', () => {
+            btn.parentElement.remove();
+            calcGoods();
+            calcTotal();
+        })
+    })
+}
